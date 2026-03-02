@@ -24,16 +24,15 @@ public class Player implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	private String name;
-	private Integer gamesplayed;
-	private Integer gameswon;
+	private int gamesPlayed;
+	private int gamesWon;
 	
 	//Constructor
 	public Player(String name)
 	{
 		this.name = name.trim();
-		//this.lname = lname.trim();
-		gamesplayed = new Integer(0);
-		gameswon = new Integer(0);
+		gamesPlayed = 0;
+		gamesWon = 0;
 	}
 	
 	//Name Getter
@@ -42,155 +41,201 @@ public class Player implements Serializable{
 		return name;
 	}
 	
-	//Returns the number of games played
-	public Integer gamesplayed()
+	//Games Played Getter
+	public int gamesPlayed()
 	{
-		return gamesplayed;
+		return gamesPlayed;
 	}
 	
-	//Returns the number of games won
-	public Integer gameswon()
+	//Games Won Getter
+	public int gamesWon()
 	{
-		return gameswon;
+		return gamesWon;
 	}
 	
-	//Calculates the win percentage of the player
-	public Integer winpercent()
+	//Win/Loss Ratio
+	public Integer winPercent()
 	{
-		return new Integer((gameswon*100)/gamesplayed);
+		return (int)((gamesWon*100)/gamesPlayed);
 	}
 	
 	//Increments the number of games played
 	public void updateGamesPlayed()
 	{
-		gamesplayed++;
+		gamesPlayed++;
 	}
 	
 	//Increments the number of games won
 	public void updateGamesWon()
 	{
-		gameswon++;
+		gamesWon++;
 	}
 	
-	
-	public static ArrayList<Player> fetch_players()         //Function to fetch the list of the players
+	//Function to fetch the list of the players
+	public static ArrayList<Player> fetchPlayers()         
 	{
-		Player tempplayer;
+		//Variables
+		Player tempPlayer;
 		ObjectInputStream input = null;
 		ArrayList<Player> players = new ArrayList<Player>();
+
+		//Try to read chessgamedata.dat
 		try
 		{
-			File infile = new File(System.getProperty("user.dir")+ File.separator + "chessgamedata.dat");
-			input = new ObjectInputStream(new FileInputStream(infile));
+			File inFile = new File(System.getProperty("user.dir")+ File.separator + "chessgamedata.dat");
+			input = new ObjectInputStream(new FileInputStream(inFile));
 			try
 			{
+				//Read the Player Objects from .dat file
 				while(true)
 				{
-					tempplayer = (Player) input.readObject();
-					players.add(tempplayer);
+					tempPlayer = (Player) input.readObject();
+					players.add(tempPlayer);
 				}
 			}
+			//Close if end of file
 			catch(EOFException e)
 			{
 				input.close();
 			}
 		}
+		//Clear player list if not found
 		catch (FileNotFoundException e)
 		{
 			players.clear();
 			return players;
 		}
+		//Print IO Exception
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			try {input.close();} catch (IOException e1) {}
+			try {input.close();} catch (IOException ex) {}
 			JOptionPane.showMessageDialog(null, "Unable to read the required Game files !!");
 		}
+		//Player Class not found
 		catch (ClassNotFoundException e) 
 		{
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Game Data File Corrupted !! Click Ok to Continue Builing New File");
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} 
+		//General Excpetion catch
+		catch (Exception ex) {
+			ex.printStackTrace();
 		}
+
+		//Return current Player list
 		return players;
 	}
 	
-	public void Update_Player()            //Function to update the statistics of a player
+	//Function to update the statistics of a player
+	public void UpdatePlayer()            
 	{
+		//Variables
 		ObjectInputStream input = null;
 		ObjectOutputStream output = null;
-		Player temp_player;
-		File inputfile=null;
-		File outputfile=null;
+		Player tempPlayer;
+		File inputFile=null;
+		File outputFile=null;
+
+		//Try to read chessgamedata.dat and write to tempfile.dat
 		try
 		{
-			inputfile = new File(System.getProperty("user.dir")+ File.separator + "chessgamedata.dat");
-			outputfile = new File(System.getProperty("user.dir")+ File.separator + "tempfile.dat");
-		} catch (SecurityException e)
+			inputFile = new File(System.getProperty("user.dir")+ File.separator + "chessgamedata.dat");
+			outputFile = new File(System.getProperty("user.dir")+ File.separator + "tempfile.dat");
+		} 
+		//Close program if no read/write
+		catch (SecurityException e)
 		{
 			JOptionPane.showMessageDialog(null, "Read-Write Permission Denied !! Program Cannot Start");
 			System.exit(0);
 		} 
-		boolean playerdonotexist;
+
+		//Does player exist in file?
+		boolean playerNotExist;
+
+		//Try writing new Player Object data
 		try
 		{
-			if(outputfile.exists()==false)
-				outputfile.createNewFile();
-			if(inputfile.exists()==false)
+			//If output file doesn't exist, create it
+			if(outputFile.exists()==false)
+				outputFile.createNewFile();
+
+			//If input file doesn't exist, write this Player object to file
+			if(inputFile.exists()==false)
 			{
-					output = new ObjectOutputStream(new java.io.FileOutputStream(outputfile,true));
+					output = new ObjectOutputStream(new java.io.FileOutputStream(outputFile,true));
 					output.writeObject(this);
 			}
+			//Else, we are adding a new Player to the file
 			else
 			{
-				input = new ObjectInputStream(new FileInputStream(inputfile));
-				output = new ObjectOutputStream(new FileOutputStream(outputfile));
-				playerdonotexist=true;
+				//Variables
+				input = new ObjectInputStream(new FileInputStream(inputFile));
+				output = new ObjectOutputStream(new FileOutputStream(outputFile));
+				playerNotExist=true;
+				
+				//Try to read and write data from file objects (defined above)
 				try
 				{
-				while(true)
-				{
-					temp_player = (Player)input.readObject();
-					if (temp_player.name().equals(name()))
+					//Read from input and write to output
+					while(true)
 					{
-						output.writeObject(this);
-						playerdonotexist = false;
+						tempPlayer = (Player)input.readObject();
+
+						//If the new Player has the name of this Player Object, write this Player
+						if (tempPlayer.name().equals(name()))
+						{
+							output.writeObject(this);
+
+							//After writing, mark the Player as existing
+							playerNotExist = false;
+						}
+						//Else, write new Player to output
+						else
+							output.writeObject(tempPlayer);
 					}
-					else
-						output.writeObject(temp_player);
 				}
-				}
-				catch(EOFException e){
+				//Close if end of file
+				catch(EOFException e)
+				{
 					input.close();
 				}
-				if(playerdonotexist)
-					output.writeObject(this);
+
+				//If this Player was not written to file (marked above), write this Player
+				if(playerNotExist) output.writeObject(this);
 			}
-			inputfile.delete();
+			//Delete outdated file
+			inputFile.delete();
+			//Close output stream
 			output.close();
+
+			//Create chessgamedata.dat with new information
 			File newf = new File(System.getProperty("user.dir")+ File.separator + "chessgamedata.dat");
-			if(outputfile.renameTo(newf)==false)
-				System.out.println("File Renameing Unsuccessful");
+			//Cannot rename output to chessgamedata.dat
+			if(outputFile.renameTo(newf)==false)
+				System.out.println("File Renaming Unsuccessful");
 		}
+		//Input/Output files cannot be found
 		catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
 		}
+		//Print IO Exception
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Unable to read/write the required Game files !! Press ok to continue");
+			JOptionPane.showMessageDialog(null, "Unable to read/write the required Game files !! Press OK to continue");
 		}
+		//Player Class not found
 		catch (ClassNotFoundException e) 
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Game Data File Corrupted !! Click Ok to Continue Builing New File");
+			JOptionPane.showMessageDialog(null, "Game Data File Corrupted !! Click OK to Continue Builing New File");
 		}
-		catch (Exception e)
+		//General Exception catch
+		catch (Exception ex)
 		{
-			
+			ex.printStackTrace();
 		}
 	}
 }
