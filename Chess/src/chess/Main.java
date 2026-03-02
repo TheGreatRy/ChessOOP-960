@@ -52,7 +52,7 @@ public class Main extends JFrame implements MouseListener
 	private Cell c, previous;
 	private int chance = 0;
 	private Cell boardState[][];
-	private ArrayList<Cell> destinationlist = new ArrayList<Cell>();
+	private ArrayList<Cell> destinationList = new ArrayList<Cell>();
 	private Player White = null, Black = null;
 	private JPanel board = new JPanel(new GridLayout(8, 8));
 	private JPanel wdetails = new JPanel(new GridLayout(3, 3));
@@ -308,13 +308,13 @@ public class Main extends JFrame implements MouseListener
 	// A function to change the chance from White Player to Black Player or vice
 	// verse
 	// It is made public because it is to be accessed in the Time Class
-	public void changechance() {
+	public void changeChance() {
 		if (boardState[getKing(chance).getx()][getKing(chance).gety()].isCheck()) {
 			chance ^= 1;
-			gameend();
+			gameEnd();
 		}
-		if (destinationlist.isEmpty() == false)
-			cleandestinations(destinationlist);
+		if (destinationList.isEmpty() == false)
+			cleanDestinations(destinationList);
 		if (previous != null)
 			previous.deselect();
 		previous = null;
@@ -341,22 +341,22 @@ public class Main extends JFrame implements MouseListener
 	}
 
 	// A function to clean the highlights of possible destination cells
-	private void cleandestinations(ArrayList<Cell> destlist) // Function to clear the last move's destinations
+	private void cleanDestinations(ArrayList<Cell> destlist) // Function to clear the last move's destinations
 	{
 		ListIterator<Cell> it = destlist.listIterator();
 		while (it.hasNext())
-			it.next().removepossibledestination();
+			it.next().removePossibleDestination();
 	}
 
 	// A function that indicates the possible moves by highlighting the Cells
-	private void highlightdestinations(ArrayList<Cell> destlist) {
+	private void highlightDestinations(ArrayList<Cell> destlist) {
 		ListIterator<Cell> it = destlist.listIterator();
 		while (it.hasNext())
-			it.next().setpossibledestination();
+			it.next().setPossibleDestination();
 	}
 
 	// Function to check if the king will be in danger if the given move is made
-	private boolean willkingbeindanger(Cell fromcell, Cell tocell) {
+	private boolean willKingBeInDanger(Cell fromcell, Cell tocell) {
 		Cell newboardstate[][] = new Cell[8][8];
 		for (int i = 0; i < 8; i++)
 			for (int j = 0; j < 8; j++) {
@@ -368,24 +368,24 @@ public class Main extends JFrame implements MouseListener
 				}
 			}
 
-		if (newboardstate[tocell.x][tocell.y].getpiece() != null)
+		if (newboardstate[tocell.x][tocell.y].getPiece() != null)
 			newboardstate[tocell.x][tocell.y].removePiece();
 
-		newboardstate[tocell.x][tocell.y].setPiece(newboardstate[fromcell.x][fromcell.y].getpiece());
-		if (newboardstate[tocell.x][tocell.y].getpiece() instanceof King) {
-			((King) (newboardstate[tocell.x][tocell.y].getpiece())).setx(tocell.x);
-			((King) (newboardstate[tocell.x][tocell.y].getpiece())).sety(tocell.y);
+		newboardstate[tocell.x][tocell.y].setPiece(newboardstate[fromcell.x][fromcell.y].getPiece());
+		if (newboardstate[tocell.x][tocell.y].getPiece() instanceof King) {
+			((King) (newboardstate[tocell.x][tocell.y].getPiece())).setx(tocell.x);
+			((King) (newboardstate[tocell.x][tocell.y].getPiece())).sety(tocell.y);
 		}
 		newboardstate[fromcell.x][fromcell.y].removePiece();
-		if (((King) (newboardstate[getKing(chance).getx()][getKing(chance).gety()].getpiece()))
-				.isindanger(newboardstate) == true)
+		if (((King) (newboardstate[getKing(chance).getx()][getKing(chance).gety()].getPiece()))
+				.isInDanger(newboardstate) == true)
 			return true;
 		else
 			return false;
 	}
 
 	// A function to eliminate the possible moves that will put the King in danger
-	private ArrayList<Cell> filterdestination(ArrayList<Cell> destlist, Cell fromcell) {
+	private ArrayList<Cell> filterDestination(ArrayList<Cell> destlist, Cell fromcell) {
 		ArrayList<Cell> newlist = new ArrayList<Cell>();
 		Cell newboardstate[][] = new Cell[8][8];
 		ListIterator<Cell> it = destlist.listIterator();
@@ -401,19 +401,19 @@ public class Main extends JFrame implements MouseListener
 				}
 
 			Cell tempc = it.next();
-			if (newboardstate[tempc.x][tempc.y].getpiece() != null)
+			if (newboardstate[tempc.x][tempc.y].getPiece() != null)
 				newboardstate[tempc.x][tempc.y].removePiece();
-			newboardstate[tempc.x][tempc.y].setPiece(newboardstate[fromcell.x][fromcell.y].getpiece());
+			newboardstate[tempc.x][tempc.y].setPiece(newboardstate[fromcell.x][fromcell.y].getPiece());
 			x = getKing(chance).getx();
 			y = getKing(chance).gety();
-			if (newboardstate[fromcell.x][fromcell.y].getpiece() instanceof King) {
-				((King) (newboardstate[tempc.x][tempc.y].getpiece())).setx(tempc.x);
-				((King) (newboardstate[tempc.x][tempc.y].getpiece())).sety(tempc.y);
+			if (newboardstate[fromcell.x][fromcell.y].getPiece() instanceof King) {
+				((King) (newboardstate[tempc.x][tempc.y].getPiece())).setx(tempc.x);
+				((King) (newboardstate[tempc.x][tempc.y].getPiece())).sety(tempc.y);
 				x = tempc.x;
 				y = tempc.y;
 			}
 			newboardstate[fromcell.x][fromcell.y].removePiece();
-			if ((((King) (newboardstate[x][y].getpiece())).isindanger(newboardstate) == false))
+			if ((((King) (newboardstate[x][y].getPiece())).isInDanger(newboardstate) == false))
 				newlist.add(tempc);
 		}
 		return newlist;
@@ -421,7 +421,7 @@ public class Main extends JFrame implements MouseListener
 
 	// A Function to filter the possible moves when the king of the current player
 	// is under Check
-	private ArrayList<Cell> incheckfilter(ArrayList<Cell> destlist, Cell fromcell, int color) {
+	private ArrayList<Cell> inCheckFilter(ArrayList<Cell> destlist, Cell fromcell, int color) {
 		ArrayList<Cell> newlist = new ArrayList<Cell>();
 		Cell newboardstate[][] = new Cell[8][8];
 		ListIterator<Cell> it = destlist.listIterator();
@@ -436,19 +436,19 @@ public class Main extends JFrame implements MouseListener
 					}
 				}
 			Cell tempc = it.next();
-			if (newboardstate[tempc.x][tempc.y].getpiece() != null)
+			if (newboardstate[tempc.x][tempc.y].getPiece() != null)
 				newboardstate[tempc.x][tempc.y].removePiece();
-			newboardstate[tempc.x][tempc.y].setPiece(newboardstate[fromcell.x][fromcell.y].getpiece());
+			newboardstate[tempc.x][tempc.y].setPiece(newboardstate[fromcell.x][fromcell.y].getPiece());
 			x = getKing(color).getx();
 			y = getKing(color).gety();
-			if (newboardstate[tempc.x][tempc.y].getpiece() instanceof King) {
-				((King) (newboardstate[tempc.x][tempc.y].getpiece())).setx(tempc.x);
-				((King) (newboardstate[tempc.x][tempc.y].getpiece())).sety(tempc.y);
+			if (newboardstate[tempc.x][tempc.y].getPiece() instanceof King) {
+				((King) (newboardstate[tempc.x][tempc.y].getPiece())).setx(tempc.x);
+				((King) (newboardstate[tempc.x][tempc.y].getPiece())).sety(tempc.y);
 				x = tempc.x;
 				y = tempc.y;
 			}
 			newboardstate[fromcell.x][fromcell.y].removePiece();
-			if ((((King) (newboardstate[x][y].getpiece())).isindanger(newboardstate) == false))
+			if ((((King) (newboardstate[x][y].getPiece())).isInDanger(newboardstate) == false))
 				newlist.add(tempc);
 		}
 		return newlist;
@@ -460,10 +460,10 @@ public class Main extends JFrame implements MouseListener
 		ArrayList<Cell> dlist = new ArrayList<Cell>();
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				if (boardState[i][j].getpiece() != null && boardState[i][j].getpiece().getcolor() == color) {
+				if (boardState[i][j].getPiece() != null && boardState[i][j].getPiece().getColor() == color) {
 					dlist.clear();
-					dlist = boardState[i][j].getpiece().move(boardState, i, j);
-					dlist = incheckfilter(dlist, boardState[i][j], color);
+					dlist = boardState[i][j].getPiece().move(boardState, i, j);
+					dlist = inCheckFilter(dlist, boardState[i][j], color);
 					if (dlist.size() != 0)
 						return false;
 				}
@@ -473,8 +473,8 @@ public class Main extends JFrame implements MouseListener
 	}
 
 	@SuppressWarnings("deprecation")
-	private void gameend() {
-		cleandestinations(destinationlist);
+	private void gameEnd() {
+		cleanDestinations(destinationList);
 		displayTime.disable();
 		timer.countdownTimer.stop();
 		if (previous != null)
@@ -521,53 +521,53 @@ public class Main extends JFrame implements MouseListener
 		// TODO Auto-generated method stub
 		c = (Cell) arg0.getSource();
 		if (previous == null) {
-			if (c.getpiece() != null) {
-				if (c.getpiece().getcolor() != chance)
+			if (c.getPiece() != null) {
+				if (c.getPiece().getColor() != chance)
 					return;
 				c.select();
 				previous = c;
-				destinationlist.clear();
-				destinationlist = c.getpiece().move(boardState, c.x, c.y);
-				if (c.getpiece() instanceof King)
-					destinationlist = filterdestination(destinationlist, c);
+				destinationList.clear();
+				destinationList = c.getPiece().move(boardState, c.x, c.y);
+				if (c.getPiece() instanceof King)
+					destinationList = filterDestination(destinationList, c);
 				else {
 					if (boardState[getKing(chance).getx()][getKing(chance).gety()].isCheck())
-						destinationlist = new ArrayList<Cell>(filterdestination(destinationlist, c));
-					else if (destinationlist.isEmpty() == false && willkingbeindanger(c, destinationlist.get(0)))
-						destinationlist.clear();
+						destinationList = new ArrayList<Cell>(filterDestination(destinationList, c));
+					else if (destinationList.isEmpty() == false && willKingBeInDanger(c, destinationList.get(0)))
+						destinationList.clear();
 				}
-				highlightdestinations(destinationlist);
+				highlightDestinations(destinationList);
 			}
 		} else {
 			if (c.x == previous.x && c.y == previous.y) {
 				c.deselect();
-				cleandestinations(destinationlist);
-				destinationlist.clear();
+				cleanDestinations(destinationList);
+				destinationList.clear();
 				previous = null;
-			} else if (c.getpiece() == null || previous.getpiece().getcolor() != c.getpiece().getcolor()) {
-				if (c.ispossibledestination()) {
-					if (c.getpiece() != null)
+			} else if (c.getPiece() == null || previous.getPiece().getColor() != c.getPiece().getColor()) {
+				if (c.isPossibleDestination()) {
+					if (c.getPiece() != null)
 						c.removePiece();
-					c.setPiece(previous.getpiece());
+					c.setPiece(previous.getPiece());
 					if (previous.isCheck())
-						previous.removecheck();
+						previous.removeCheck();
 					previous.removePiece();
-					if (getKing(chance ^ 1).isindanger(boardState)) {
-						boardState[getKing(chance ^ 1).getx()][getKing(chance ^ 1).gety()].setcheck();
-						if (checkmate(getKing(chance ^ 1).getcolor())) {
+					if (getKing(chance ^ 1).isInDanger(boardState)) {
+						boardState[getKing(chance ^ 1).getx()][getKing(chance ^ 1).gety()].setCheck();
+						if (checkmate(getKing(chance ^ 1).getColor())) {
 							previous.deselect();
-							if (previous.getpiece() != null)
+							if (previous.getPiece() != null)
 								previous.removePiece();
-							gameend();
+							gameEnd();
 						}
 					}
-					if (getKing(chance).isindanger(boardState) == false)
-						boardState[getKing(chance).getx()][getKing(chance).gety()].removecheck();
-					if (c.getpiece() instanceof King) {
-						((King) c.getpiece()).setx(c.x);
-						((King) c.getpiece()).sety(c.y);
+					if (getKing(chance).isInDanger(boardState) == false)
+						boardState[getKing(chance).getx()][getKing(chance).gety()].removeCheck();
+					if (c.getPiece() instanceof King) {
+						((King) c.getPiece()).setx(c.x);
+						((King) c.getPiece()).sety(c.y);
 					}
-					changechance();
+					changeChance();
 					if (!end) {
 						timer.reset();
 						timer.start();
@@ -577,29 +577,29 @@ public class Main extends JFrame implements MouseListener
 					previous.deselect();
 					previous = null;
 				}
-				cleandestinations(destinationlist);
-				destinationlist.clear();
-			} else if (previous.getpiece().getcolor() == c.getpiece().getcolor()) {
+				cleanDestinations(destinationList);
+				destinationList.clear();
+			} else if (previous.getPiece().getColor() == c.getPiece().getColor()) {
 				previous.deselect();
-				cleandestinations(destinationlist);
-				destinationlist.clear();
+				cleanDestinations(destinationList);
+				destinationList.clear();
 				c.select();
 				previous = c;
-				destinationlist = c.getpiece().move(boardState, c.x, c.y);
-				if (c.getpiece() instanceof King)
-					destinationlist = filterdestination(destinationlist, c);
+				destinationList = c.getPiece().move(boardState, c.x, c.y);
+				if (c.getPiece() instanceof King)
+					destinationList = filterDestination(destinationList, c);
 				else {
 					if (boardState[getKing(chance).getx()][getKing(chance).gety()].isCheck())
-						destinationlist = new ArrayList<Cell>(filterdestination(destinationlist, c));
-					else if (destinationlist.isEmpty() == false && willkingbeindanger(c, destinationlist.get(0)))
-						destinationlist.clear();
+						destinationList = new ArrayList<Cell>(filterDestination(destinationList, c));
+					else if (destinationList.isEmpty() == false && willKingBeInDanger(c, destinationList.get(0)))
+						destinationList.clear();
 				}
-				highlightdestinations(destinationlist);
+				highlightDestinations(destinationList);
 			}
 		}
-		if (c.getpiece() != null && c.getpiece() instanceof King) {
-			((King) c.getpiece()).setx(c.x);
-			((King) c.getpiece()).sety(c.y);
+		if (c.getPiece() != null && c.getPiece() instanceof King) {
+			((King) c.getPiece()).setx(c.x);
+			((King) c.getPiece()).sety(c.y);
 		}
 	}
 

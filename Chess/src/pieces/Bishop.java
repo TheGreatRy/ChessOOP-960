@@ -27,19 +27,19 @@ public class Bishop extends Piece{
 	{
 		//Bishop can Move diagonally in all 4 direction (NW,NE,SW,SE)
 		//This function defines that logic
-		possiblemoves.clear();
+		possibleMoves.clear();
 		int tempx=x+1,tempy=y-1;
 		while(tempx<8&&tempy>=0)
 		{
-			if(state[tempx][tempy].getpiece()==null)
+			if(state[tempx][tempy].getPiece()==null)
 			{
-				possiblemoves.add(state[tempx][tempy]);
+				possibleMoves.add(state[tempx][tempy]);
 			}
-			else if(state[tempx][tempy].getpiece().getcolor()==this.getcolor())
+			else if(state[tempx][tempy].getPiece().getColor()==this.getColor())
 				break;
 			else
 			{
-				possiblemoves.add(state[tempx][tempy]);
+				possibleMoves.add(state[tempx][tempy]);
 				break;
 			}
 			tempx++;
@@ -48,13 +48,13 @@ public class Bishop extends Piece{
 		tempx=x-1;tempy=y+1;
 		while(tempx>=0&&tempy<8)
 		{
-			if(state[tempx][tempy].getpiece()==null)
-				possiblemoves.add(state[tempx][tempy]);
-			else if(state[tempx][tempy].getpiece().getcolor()==this.getcolor())
+			if(state[tempx][tempy].getPiece()==null)
+				possibleMoves.add(state[tempx][tempy]);
+			else if(state[tempx][tempy].getPiece().getColor()==this.getColor())
 				break;
 			else
 			{
-				possiblemoves.add(state[tempx][tempy]);
+				possibleMoves.add(state[tempx][tempy]);
 				break;
 			}
 			tempx--;
@@ -63,13 +63,13 @@ public class Bishop extends Piece{
 		tempx=x-1;tempy=y-1;
 		while(tempx>=0&&tempy>=0)
 		{
-			if(state[tempx][tempy].getpiece()==null)
-				possiblemoves.add(state[tempx][tempy]);
-			else if(state[tempx][tempy].getpiece().getcolor()==this.getcolor())
+			if(state[tempx][tempy].getPiece()==null)
+				possibleMoves.add(state[tempx][tempy]);
+			else if(state[tempx][tempy].getPiece().getColor()==this.getColor())
 				break;
 			else
 			{
-				possiblemoves.add(state[tempx][tempy]);
+				possibleMoves.add(state[tempx][tempy]);
 				break;
 			}
 			tempx--;
@@ -78,18 +78,18 @@ public class Bishop extends Piece{
 		tempx=x+1;tempy=y+1;
 		while(tempx<8&&tempy<8)
 		{
-			if(state[tempx][tempy].getpiece()==null)
-				possiblemoves.add(state[tempx][tempy]);
-			else if(state[tempx][tempy].getpiece().getcolor()==this.getcolor())
+			if(state[tempx][tempy].getPiece()==null)
+				possibleMoves.add(state[tempx][tempy]);
+			else if(state[tempx][tempy].getPiece().getColor()==this.getColor())
 				break;
 			else
 			{
-				possiblemoves.add(state[tempx][tempy]);
+				possibleMoves.add(state[tempx][tempy]);
 				break;
 			}
 			tempx++;
 			tempy++;
 		}
-		return possiblemoves;
+		return possibleMoves;
 	}
 }

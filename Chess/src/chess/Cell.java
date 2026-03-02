@@ -25,7 +25,7 @@ public class Cell extends JPanel implements Cloneable {
 	private boolean isCheck = false;
 	public int x, y;
 
-	// Constructors
+	// Constructor
 	public Cell(int x, int y, Piece p) {
 		this.x = x;
 		this.y = y;
@@ -52,8 +52,8 @@ public class Cell extends JPanel implements Cloneable {
 			setBackground(new Color(113, 198, 113));
 		else
 			setBackground(Color.white);
-		if (cell.getpiece() != null) {
-			setPiece(cell.getpiece().getcopy());
+		if (cell.getPiece() != null) {
+			setPiece(cell.getPiece().getCopy());
 		} else
 			piece = null;
 	}
@@ -77,7 +77,7 @@ public class Cell extends JPanel implements Cloneable {
 		}
 	}
 
-	public Piece getpiece() // Function to access piece of a particular cell
+	public Piece getPiece() // Function to access piece of a particular cell
 	{
 		return this.piece;
 	}
@@ -88,7 +88,7 @@ public class Cell extends JPanel implements Cloneable {
 		this.isSelected = true;
 	}
 
-	public boolean isselected() // Function to return if the cell is under selection
+	public boolean isSelected() // Function to return if the cell is under selection
 	{
 		return this.isSelected;
 	}
@@ -99,13 +99,13 @@ public class Cell extends JPanel implements Cloneable {
 		this.isSelected = false;
 	}
 
-	public void setpossibledestination() // Function to highlight a cell to indicate that it is a possible valid move
+	public void setPossibleDestination() // Function to highlight a cell to indicate that it is a possible valid move
 	{
 		this.setBorder(BorderFactory.createLineBorder(Color.blue, 4));
 		this.isPossibleDestination = true;
 	}
 
-	public void removepossibledestination() // Remove the cell from the list of possible moves
+	public void removePossibleDestination() // Remove the cell from the list of possible moves
 	{
 		this.setBorder(null);
 		this.isPossibleDestination = false;
@@ -116,13 +116,13 @@ public class Cell extends JPanel implements Cloneable {
 		return this.isPossibleDestination;
 	}
 
-	public void setcheck() // Function to highlight the current cell as checked (For King)
+	public void setCheck() // Function to highlight the current cell as checked (For King)
 	{
 		this.setBackground(Color.RED);
 		this.isCheck = true;
 	}
 
-	public void removecheck() // Function to deselect check
+	public void removeCheck() // Function to deselect check
 	{
 		this.setBorder(null);
 		if ((x + y) % 2 == 0)

@@ -17,7 +17,7 @@ public abstract class Piece implements Cloneable{
 	private int color;
 	private String id=null;
 	private String path;
-	protected ArrayList<Cell> possiblemoves = new ArrayList<Cell>();  //Protected (access from child classes)
+	protected ArrayList<Cell> possibleMoves = new ArrayList<Cell>();  //Protected (access from child classes)
 	public abstract ArrayList<Cell> move(Cell pos[][],int x,int y);  //Abstract Function. Must be overridden
 	
 	//Id Setter
@@ -51,13 +51,13 @@ public abstract class Piece implements Cloneable{
 	}
 	
 	//Color Getter
-	public int getcolor()
+	public int getColor()
 	{
 		return this.color;
 	}
 	
 	//Function to return the a "shallow" copy of the object. The copy has exact same variable value but different reference
-	public Piece getcopy() throws CloneNotSupportedException
+	public Piece getCopy() throws CloneNotSupportedException
 	{
 		return (Piece) this.clone();
 	}
