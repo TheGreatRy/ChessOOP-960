@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
  * Objects of this class is updated and written in the Game's Data Files after every Game
  * 
  * -------UPDATED-------
- * Additional documontation
+ * Additional documentation
  * Fixed formatting, naming conventions, and switched to C style brackets (personal preference)
  */
 

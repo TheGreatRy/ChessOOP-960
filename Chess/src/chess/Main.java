@@ -26,6 +26,9 @@ import java.util.ListIterator;
  * It is inherited from the JFrame Class of Java's Swing Library.
  * 
  * -------UPDATED-------
+ * Additional documentation
+ * Fixed formatting, naming conventions, and switched to C style brackets (personal preference)
+ * 
  * Game mode Chess960 is being added
  * Chess960 randomizes the ranked rows of both sets. The ranked row is the edge row with the non-pawn pieces
  * 
@@ -41,20 +44,37 @@ import java.util.ListIterator;
 public class Main extends JFrame implements MouseListener 
 {
 	// Variable Declaration
+	//Board
+	public static Main mainBoard;
 	private static final int Height = 700;
 	private static final int Width = 1110;
-	private static Rook wr01, wr02, br01, br02;
-	private static Knight wk01, wk02, bk01, bk02;
-	private static Bishop wb01, wb02, bb01, bb02;
+	
+	//Player
+	private Player White = null, Black = null;
+	private Player tempPlayer;
+	private ArrayList<Player> wplayer, bplayer;
+	private boolean selected = false, end = false;
+
+	//Pieces
+	private static Rook wR01, wR02, bR01, bR02;
+	private static Knight wN01, wN02, bN01, bN02;
+	private static Bishop wB01, wB02, bB01, bB02;
 	private static Pawn wp[], bp[];
-	private static Queen wq, bq;
-	private static King wk, bk;
-	private Cell c, previous;
+	private static Queen wQ, bQ;
+	private static King wK, bK;
+
+	//Cells
 	private int chance = 0;
+	private Cell c, previous;
 	private Cell boardState[][];
 	private ArrayList<Cell> destinationList = new ArrayList<Cell>();
-	private Player White = null, Black = null;
-	private JPanel board = new JPanel(new GridLayout(8, 8));
+	
+	//Timer
+	private Time timer;
+	public static int timeRemaining = 60;
+
+	//GUI
+	private JPanel panBoard = new JPanel(new GridLayout(8, 8));
 	private JPanel wdetails = new JPanel(new GridLayout(3, 3));
 	private JPanel bdetails = new JPanel(new GridLayout(3, 3));
 	private JPanel wcombopanel = new JPanel();
@@ -63,43 +83,37 @@ public class Main extends JFrame implements MouseListener
 	private JSplitPane split;
 	private JLabel label, mov;
 	private static JLabel CHNC;
-	private Time timer;
-	public static Main Mainboard;
-	private boolean selected = false, end = false;
 	private Container content;
-	private ArrayList<Player> wplayer, bplayer;
 	private ArrayList<String> Wnames = new ArrayList<String>();
 	private ArrayList<String> Bnames = new ArrayList<String>();
 	private JComboBox<String> wcombo, bcombo;
 	private String wname = null, bname = null, winner = null;
 	static String move;
-	private Player tempPlayer;
 	private JScrollPane wscroll, bscroll;
 	private String[] WNames = {}, BNames = {};
 	private JSlider timeSlider;
 	private BufferedImage image;
-	private Button start, wselect, bselect, WNewPlayer, BNewPlayer;
-	public static int timeRemaining = 60;
+	private Button bttnStart, bttnWSelectPlayer, bttnBSelectPlayer, bttnWCreatePlayer, bttnBCreatePlayer;
 
 	public static void main(String[] args) {
 
 		// variable initialization
-		wr01 = new Rook("WR01", "White_Rook.png", 0);
-		wr02 = new Rook("WR02", "White_Rook.png", 0);
-		br01 = new Rook("BR01", "Black_Rook.png", 1);
-		br02 = new Rook("BR02", "Black_Rook.png", 1);
-		wk01 = new Knight("WK01", "White_Knight.png", 0);
-		wk02 = new Knight("WK02", "White_Knight.png", 0);
-		bk01 = new Knight("BK01", "Black_Knight.png", 1);
-		bk02 = new Knight("BK02", "Black_Knight.png", 1);
-		wb01 = new Bishop("WB01", "White_Bishop.png", 0);
-		wb02 = new Bishop("WB02", "White_Bishop.png", 0);
-		bb01 = new Bishop("BB01", "Black_Bishop.png", 1);
-		bb02 = new Bishop("BB02", "Black_Bishop.png", 1);
-		wq = new Queen("WQ", "White_Queen.png", 0);
-		bq = new Queen("BQ", "Black_Queen.png", 1);
-		wk = new King("WK", "White_King.png", 0, 7, 3);
-		bk = new King("BK", "Black_King.png", 1, 0, 3);
+		wR01 = new Rook("wR01", "White_Rook.png", 0);
+		wR02 = new Rook("wR02", "White_Rook.png", 0);
+		bR01 = new Rook("bR01", "Black_Rook.png", 1);
+		bR02 = new Rook("bR02", "Black_Rook.png", 1);
+		wN01 = new Knight("wN01", "White_Knight.png", 0);
+		wN02 = new Knight("wN02", "White_Knight.png", 0);
+		bN01 = new Knight("bN01", "Black_Knight.png", 1);
+		bN02 = new Knight("bN02", "Black_Knight.png", 1);
+		wB01 = new Bishop("wB01", "White_Bishop.png", 0);
+		wB02 = new Bishop("wB02", "White_Bishop.png", 0);
+		bB01 = new Bishop("bB01", "Black_Bishop.png", 1);
+		bB02 = new Bishop("bB02", "Black_Bishop.png", 1);
+		wQ = new Queen("wQ", "White_Queen.png", 0);
+		bQ = new Queen("bQ", "Black_Queen.png", 1);
+		wK = new King("wK", "White_King.png", 0, 7, 3);
+		bK = new King("bK", "Black_King.png", 1, 0, 3);
 		wp = new Pawn[8];
 		bp = new Pawn[8];
 		for (int i = 0; i < 8; i++) {
@@ -108,9 +122,9 @@ public class Main extends JFrame implements MouseListener
 		}
 
 		// Setting up the board
-		Mainboard = new Main();
-		Mainboard.setVisible(true);
-		Mainboard.setResizable(false);
+		mainBoard = new Main();
+		mainBoard.setVisible(true);
+		mainBoard.setResizable(false);
 	}
 
 	// Constructor
@@ -121,14 +135,14 @@ public class Main extends JFrame implements MouseListener
 		wname = null;
 		bname = null;
 		winner = null;
-		board = new JPanel(new GridLayout(8, 8));
+		panBoard = new JPanel(new GridLayout(8, 8));
 		wdetails = new JPanel(new GridLayout(3, 3));
 		bdetails = new JPanel(new GridLayout(3, 3));
 		bcombopanel = new JPanel();
 		wcombopanel = new JPanel();
 		Wnames = new ArrayList<String>();
 		Bnames = new ArrayList<String>();
-		board.setMinimumSize(new Dimension(800, 700));
+		panBoard.setMinimumSize(new Dimension(800, 700));
 		ImageIcon img = new ImageIcon(this.getClass().getResource("icon.png"));
 		this.setIconImage(img.getImage());
 
@@ -155,7 +169,7 @@ public class Main extends JFrame implements MouseListener
 		BNames = Bnames.toArray(BNames);
 
 		Cell cell;
-		board.setBorder(BorderFactory.createLoweredBevelBorder());
+		panBoard.setBorder(BorderFactory.createLoweredBevelBorder());
 		pieces.Piece P;
 		content = getContentPane();
 		setSize(Width, Height);
@@ -186,20 +200,20 @@ public class Main extends JFrame implements MouseListener
 		bscroll = new JScrollPane(bcombo);
 		wcombopanel.setLayout(new FlowLayout());
 		bcombopanel.setLayout(new FlowLayout());
-		wselect = new Button("Select");
-		bselect = new Button("Select");
-		wselect.addActionListener(new SelectHandler(0));
-		bselect.addActionListener(new SelectHandler(1));
-		WNewPlayer = new Button("New Player");
-		BNewPlayer = new Button("New Player");
-		WNewPlayer.addActionListener(new Handler(0));
-		BNewPlayer.addActionListener(new Handler(1));
+		bttnWSelectPlayer = new Button("Select");
+		bttnBSelectPlayer = new Button("Select");
+		bttnWSelectPlayer.addActionListener(new SelectHandler(0));
+		bttnBSelectPlayer.addActionListener(new SelectHandler(1));
+		bttnWCreatePlayer = new Button("New Player");
+		bttnBCreatePlayer = new Button("New Player");
+		bttnWCreatePlayer.addActionListener(new Handler(0));
+		bttnBCreatePlayer.addActionListener(new Handler(1));
 		wcombopanel.add(wscroll);
-		wcombopanel.add(wselect);
-		wcombopanel.add(WNewPlayer);
+		wcombopanel.add(bttnWSelectPlayer);
+		wcombopanel.add(bttnWCreatePlayer);
 		bcombopanel.add(bscroll);
-		bcombopanel.add(bselect);
-		bcombopanel.add(BNewPlayer);
+		bcombopanel.add(bttnBSelectPlayer);
+		bcombopanel.add(bttnBCreatePlayer);
 		WhitePlayer.add(wcombopanel, BorderLayout.NORTH);
 		BlackPlayer.add(bcombopanel, BorderLayout.NORTH);
 		whitestats.add(new JLabel("Name   :"));
@@ -219,54 +233,54 @@ public class Main extends JFrame implements MouseListener
 			for (int j = 0; j < 8; j++) {
 				P = null;
 				if (i == 0 && j == 0)
-					P = br01;
+					P = bR01;
 				else if (i == 0 && j == 7)
-					P = br02;
+					P = bR02;
 				else if (i == 7 && j == 0)
-					P = wr01;
+					P = wR01;
 				else if (i == 7 && j == 7)
-					P = wr02;
+					P = wR02;
 				else if (i == 0 && j == 1)
-					P = bk01;
+					P = bN01;
 				else if (i == 0 && j == 6)
-					P = bk02;
+					P = bN02;
 				else if (i == 7 && j == 1)
-					P = wk01;
+					P = wN01;
 				else if (i == 7 && j == 6)
-					P = wk02;
+					P = wN02;
 				else if (i == 0 && j == 2)
-					P = bb01;
+					P = bB01;
 				else if (i == 0 && j == 5)
-					P = bb02;
+					P = bB02;
 				else if (i == 7 && j == 2)
-					P = wb01;
+					P = wB01;
 				else if (i == 7 && j == 5)
-					P = wb02;
+					P = wB02;
 				else if (i == 0 && j == 3)
-					P = bk;
+					P = bK;
 				else if (i == 0 && j == 4)
-					P = bq;
+					P = bQ;
 				else if (i == 7 && j == 3)
-					P = wk;
+					P = wK;
 				else if (i == 7 && j == 4)
-					P = wq;
+					P = wQ;
 				else if (i == 1)
 					P = bp[j];
 				else if (i == 6)
 					P = wp[j];
 				cell = new Cell(i, j, P);
 				cell.addMouseListener(this);
-				board.add(cell);
+				panBoard.add(cell);
 				boardState[i][j] = cell;
 			}
 		showPlayer = new JPanel(new FlowLayout());
 		showPlayer.add(timeSlider);
 		JLabel setTime = new JLabel("Set Timer(in mins):");
-		start = new Button("Start");
-		start.setBackground(Color.black);
-		start.setForeground(Color.white);
-		start.addActionListener(new START());
-		start.setPreferredSize(new Dimension(120, 40));
+		bttnStart = new Button("bttnStart");
+		bttnStart.setBackground(Color.black);
+		bttnStart.setForeground(Color.white);
+		bttnStart.addActionListener(new START());
+		bttnStart.setPreferredSize(new Dimension(120, 40));
 		setTime.setFont(new Font("Arial", Font.BOLD, 16));
 		label = new JLabel("Time Starts now", JLabel.CENTER);
 		label.setFont(new Font("SERIF", Font.BOLD, 30));
@@ -274,10 +288,10 @@ public class Main extends JFrame implements MouseListener
 		time = new JPanel(new GridLayout(3, 3));
 		time.add(setTime);
 		time.add(showPlayer);
-		displayTime.add(start);
+		displayTime.add(bttnStart);
 		time.add(displayTime);
 		controlPanel.add(time);
-		board.setMinimumSize(new Dimension(800, 700));
+		panBoard.setMinimumSize(new Dimension(800, 700));
 
 		// The Left Layout When Game is inactive
 		temp = new JPanel() 
@@ -335,9 +349,9 @@ public class Main extends JFrame implements MouseListener
 	// A function to retrieve the Black King or White King
 	private King getKing(int color) {
 		if (color == 0)
-			return wk;
+			return wK;
 		else
-			return bk;
+			return bK;
 	}
 
 	// A function to clean the highlights of possible destination cells
@@ -488,29 +502,29 @@ public class Main extends JFrame implements MouseListener
 			Black.updatePlayer();
 			winner = Black.name();
 		}
-		JOptionPane.showMessageDialog(board, "Checkmate!!!\n" + winner + " wins");
+		JOptionPane.showMessageDialog(panBoard, "Checkmate!!!\n" + winner + " wins");
 		WhitePlayer.remove(wdetails);
 		BlackPlayer.remove(bdetails);
 		displayTime.remove(label);
 
-		displayTime.add(start);
+		displayTime.add(bttnStart);
 		showPlayer.remove(mov);
 		showPlayer.remove(CHNC);
 		showPlayer.revalidate();
 		showPlayer.add(timeSlider);
 
-		split.remove(board);
+		split.remove(panBoard);
 		split.add(temp);
-		WNewPlayer.enable();
-		BNewPlayer.enable();
-		wselect.enable();
-		bselect.enable();
+		bttnWCreatePlayer.enable();
+		bttnBCreatePlayer.enable();
+		bttnWSelectPlayer.enable();
+		bttnBSelectPlayer.enable();
 		end = true;
-		Mainboard.disable();
-		Mainboard.dispose();
-		Mainboard = new Main();
-		Mainboard.setVisible(true);
-		Mainboard.setResizable(false);
+		mainBoard.disable();
+		mainBoard.dispose();
+		mainBoard = new Main();
+		mainBoard.setVisible(true);
+		mainBoard.setResizable(false);
 	}
 
 	// These are the abstract function of the parent class. Only relevant method
@@ -639,12 +653,12 @@ public class Main extends JFrame implements MouseListener
 			White.updatePlayer();
 			Black.updateGamesPlayed();
 			Black.updatePlayer();
-			WNewPlayer.disable();
-			BNewPlayer.disable();
-			wselect.disable();
-			bselect.disable();
+			bttnWCreatePlayer.disable();
+			bttnBCreatePlayer.disable();
+			bttnWSelectPlayer.disable();
+			bttnBSelectPlayer.disable();
 			split.remove(temp);
-			split.add(board);
+			split.add(panBoard);
 			showPlayer.remove(timeSlider);
 			mov = new JLabel("Move:");
 			mov.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
@@ -654,7 +668,7 @@ public class Main extends JFrame implements MouseListener
 			CHNC.setFont(new Font("Comic Sans MS", Font.BOLD, 20));
 			CHNC.setForeground(Color.blue);
 			showPlayer.add(CHNC);
-			displayTime.remove(start);
+			displayTime.remove(bttnStart);
 			displayTime.add(label);
 			timer = new Time(label);
 			timer.start();
