@@ -46,7 +46,7 @@ public class Main extends JFrame implements MouseListener
 	// Variable Declaration
 	//Board
 	public static Main mainBoard;
-	private static final int Height = 700;
+	private static final int Height = 800;
 	private static final int Width = 1110;
 	
 	//Player
@@ -59,7 +59,7 @@ public class Main extends JFrame implements MouseListener
 	private static Rook wR01, wR02, bR01, bR02;
 	private static Knight wN01, wN02, bN01, bN02;
 	private static Bishop wB01, wB02, bB01, bB02;
-	private static Pawn wp[], bp[];
+	private static Pawn wP[], bP[];
 	private static Queen wQ, bQ;
 	private static King wK, bK;
 
@@ -79,21 +79,25 @@ public class Main extends JFrame implements MouseListener
 	private JPanel panBDetails = new JPanel(new GridLayout(3, 3));
 	private JPanel panWCombo = new JPanel();
 	private JPanel panBCombo = new JPanel();
-	private JPanel panControl, panWPlayer, panBPlayer, panTemp, panDisplayTime, panShowPlayer, panTime;
+	private JPanel panControl, panWPlayer, panBPlayer, panTemp, panDisplayTime, panShowPlayer, panTime, panMode;
 	private Container content;
 	private ArrayList<String> listWNames = new ArrayList<String>();
 	private ArrayList<String> listBNames = new ArrayList<String>();
 	private String[] arrWNames = {}, arrBNames = {};
 	private JComboBox<String> wCombo, bCombo;
 	private static JLabel labPlayerTurn;
-	private JLabel labTime, labMove;
+	private JLabel labTime, labMove, labSetTimer, labSetMode;
 	private JSplitPane split;
 	private String strWName = null, strBName = null, strWinner = null;
 	static 	String strMove;
 	private JScrollPane scrollW, scrollB;
 	private JSlider timeSlider;
+	private JRadioButton radClassic, radNineSixty;
 	private BufferedImage image;
 	private Button bttnStart, bttnWSelectPlayer, bttnBSelectPlayer, bttnWCreatePlayer, bttnBCreatePlayer;
+	private ButtonGroup grpRadioButtons = new ButtonGroup();
+
+	private boolean isClassic = true;
 
 	public static void main(String[] args) {
 
@@ -114,11 +118,11 @@ public class Main extends JFrame implements MouseListener
 		bQ = new Queen("bQ", "Black_Queen.png", 1);
 		wK = new King("wK", "White_King.png", 0, 7, 3);
 		bK = new King("bK", "Black_King.png", 1, 0, 3);
-		wp = new Pawn[8];
-		bp = new Pawn[8];
+		wP = new Pawn[8];
+		bP = new Pawn[8];
 		for (int i = 0; i < 8; i++) {
-			wp[i] = new Pawn("WP0" + (i + 1), "White_Pawn.png", 0);
-			bp[i] = new Pawn("BP0" + (i + 1), "Black_Pawn.png", 1);
+			wP[i] = new Pawn("wP0" + (i + 1), "White_Pawn.png", 0);
+			bP[i] = new Pawn("bP0" + (i + 1), "Black_Pawn.png", 1);
 		}
 
 		// Setting up the board
@@ -127,8 +131,72 @@ public class Main extends JFrame implements MouseListener
 		mainBoard.setResizable(false);
 	}
 
+	private void RunSetup()
+	{
+		// Defining all the Cells
+		Cell cell;
+		pieces.Piece P;
+		boardState = new Cell[8][8];
+
+		if (isClassic)
+		{
+			//Standard Setup
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++) {
+					P = null;
+					if (i == 0 && j == 0)
+						P = bR01;
+					else if (i == 0 && j == 7)
+						P = bR02;
+					else if (i == 7 && j == 0)
+						P = wR01;
+					else if (i == 7 && j == 7)
+						P = wR02;
+					else if (i == 0 && j == 1)
+						P = bN01;
+					else if (i == 0 && j == 6)
+						P = bN02;
+					else if (i == 7 && j == 1)
+						P = wN01;
+					else if (i == 7 && j == 6)
+						P = wN02;
+					else if (i == 0 && j == 2)
+						P = bB01;
+					else if (i == 0 && j == 5)
+						P = bB02;
+					else if (i == 7 && j == 2)
+						P = wB01;
+					else if (i == 7 && j == 5)
+						P = wB02;
+					else if (i == 0 && j == 3)
+						P = bK;
+					else if (i == 0 && j == 4)
+						P = bQ;
+					else if (i == 7 && j == 3)
+						P = wK;
+					else if (i == 7 && j == 4)
+						P = wQ;
+					else if (i == 1)
+						P = bP[j];
+					else if (i == 6)
+						P = wP[j];
+					cell = new Cell(i, j, P);
+					cell.addMouseListener(this);
+					panBoard.add(cell);
+					boardState[i][j] = cell;
+				}
+			}
+		}
+		else
+		{
+			//Chess960
+		}
+	}
 	// Constructor
 	private Main() {
+
+		SwitchRadio getSwitch = new SwitchRadio();
 		timeRemaining = 60;
 		timeSlider = new JSlider();
 		strMove = "White";
@@ -146,7 +214,7 @@ public class Main extends JFrame implements MouseListener
 		ImageIcon img = new ImageIcon(this.getClass().getResource("icon.png"));
 		this.setIconImage(img.getImage());
 
-		// Time Slider Details
+		//#region Timer
 		timeSlider.setMinimum(1);
 		timeSlider.setMaximum(15);
 		timeSlider.setValue(1);
@@ -154,8 +222,9 @@ public class Main extends JFrame implements MouseListener
 		timeSlider.setPaintLabels(true);
 		timeSlider.setPaintTicks(true);
 		timeSlider.addChangeListener(new TimeChange());
+		//#endregion
 
-		// Fetching Details of all Players
+		//#region Get Available Player
 		itemWPlayer = Player.fetchPlayers();
 		Iterator<Player> witr = itemWPlayer.iterator();
 		while (witr.hasNext())
@@ -167,10 +236,11 @@ public class Main extends JFrame implements MouseListener
 			listBNames.add(bitr.next().name());
 		arrWNames = listWNames.toArray(arrWNames);
 		arrBNames = listBNames.toArray(arrBNames);
+		//#endregion
 
-		Cell cell;
+		//#region Board Setup
+		
 		panBoard.setBorder(BorderFactory.createLoweredBevelBorder());
-		pieces.Piece P;
 		content = getContentPane();
 		setSize(Width, Height);
 		setTitle("Chess");
@@ -181,7 +251,9 @@ public class Main extends JFrame implements MouseListener
 		panControl.setBorder(BorderFactory.createTitledBorder(null, "Statistics", TitledBorder.TOP,
 				TitledBorder.CENTER, new Font("Lucida Calligraphy", Font.PLAIN, 20), Color.ORANGE));
 
-		// Defining the Player Box in Control Panel
+		//#endregion
+
+		//#region Player Box
 		panWPlayer = new JPanel();
 		panWPlayer.setBorder(BorderFactory.createTitledBorder(null, "White Player", TitledBorder.TOP,
 				TitledBorder.CENTER, new Font("times new roman", Font.BOLD, 18), Color.RED));
@@ -191,15 +263,20 @@ public class Main extends JFrame implements MouseListener
 		panBPlayer.setBorder(BorderFactory.createTitledBorder(null, "Black Player", TitledBorder.TOP,
 				TitledBorder.CENTER, new Font("times new roman", Font.BOLD, 18), Color.BLUE));
 		panBPlayer.setLayout(new BorderLayout());
+		//#endregion
 
+		//#region Player Selection
 		JPanel whitestats = new JPanel(new GridLayout(3, 3));
 		JPanel blackstats = new JPanel(new GridLayout(3, 3));
+		
 		wCombo = new JComboBox<String>(arrWNames);
 		bCombo = new JComboBox<String>(arrBNames);
 		scrollW = new JScrollPane(wCombo);
 		scrollB = new JScrollPane(bCombo);
+		
 		panWCombo.setLayout(new FlowLayout());
 		panBCombo.setLayout(new FlowLayout());
+		
 		bttnWSelectPlayer = new Button("Select");
 		bttnBSelectPlayer = new Button("Select");
 		bttnWSelectPlayer.addActionListener(new SelectHandler(0));
@@ -208,6 +285,7 @@ public class Main extends JFrame implements MouseListener
 		bttnBCreatePlayer = new Button("New Player");
 		bttnWCreatePlayer.addActionListener(new Handler(0));
 		bttnBCreatePlayer.addActionListener(new Handler(1));
+		
 		panWCombo.add(scrollW);
 		panWCombo.add(bttnWSelectPlayer);
 		panWCombo.add(bttnWCreatePlayer);
@@ -216,80 +294,64 @@ public class Main extends JFrame implements MouseListener
 		panBCombo.add(bttnBCreatePlayer);
 		panWPlayer.add(panWCombo, BorderLayout.NORTH);
 		panBPlayer.add(panBCombo, BorderLayout.NORTH);
+		
 		whitestats.add(new JLabel("Name   :"));
 		whitestats.add(new JLabel("Played :"));
 		whitestats.add(new JLabel("Won    :"));
+		
 		blackstats.add(new JLabel("Name   :"));
 		blackstats.add(new JLabel("Played :"));
 		blackstats.add(new JLabel("Won    :"));
+		
 		panWPlayer.add(whitestats, BorderLayout.WEST);
 		panBPlayer.add(blackstats, BorderLayout.WEST);
+		
 		panControl.add(panWPlayer);
 		panControl.add(panBPlayer);
+		//#endregion
 
-		// Defining all the Cells
-		boardState = new Cell[8][8];
-		for (int i = 0; i < 8; i++)
-			for (int j = 0; j < 8; j++) {
-				P = null;
-				if (i == 0 && j == 0)
-					P = bR01;
-				else if (i == 0 && j == 7)
-					P = bR02;
-				else if (i == 7 && j == 0)
-					P = wR01;
-				else if (i == 7 && j == 7)
-					P = wR02;
-				else if (i == 0 && j == 1)
-					P = bN01;
-				else if (i == 0 && j == 6)
-					P = bN02;
-				else if (i == 7 && j == 1)
-					P = wN01;
-				else if (i == 7 && j == 6)
-					P = wN02;
-				else if (i == 0 && j == 2)
-					P = bB01;
-				else if (i == 0 && j == 5)
-					P = bB02;
-				else if (i == 7 && j == 2)
-					P = wB01;
-				else if (i == 7 && j == 5)
-					P = wB02;
-				else if (i == 0 && j == 3)
-					P = bK;
-				else if (i == 0 && j == 4)
-					P = bQ;
-				else if (i == 7 && j == 3)
-					P = wK;
-				else if (i == 7 && j == 4)
-					P = wQ;
-				else if (i == 1)
-					P = bp[j];
-				else if (i == 6)
-					P = wp[j];
-				cell = new Cell(i, j, P);
-				cell.addMouseListener(this);
-				panBoard.add(cell);
-				boardState[i][j] = cell;
-			}
 		panShowPlayer = new JPanel(new FlowLayout());
 		panShowPlayer.add(timeSlider);
-		JLabel setTime = new JLabel("Set Timer(in mins):");
-		bttnStart = new Button("bttnStart");
+		labSetTimer = new JLabel("Set Timer(in mins):");
+		labSetMode = new JLabel("Select Mode:");
+		
+		bttnStart = new Button("Start");
 		bttnStart.setBackground(Color.black);
 		bttnStart.setForeground(Color.white);
 		bttnStart.addActionListener(new START());
 		bttnStart.setPreferredSize(new Dimension(120, 40));
-		setTime.setFont(new Font("Arial", Font.BOLD, 16));
+		
+		panMode = new JPanel(new FlowLayout());
+		radClassic = new JRadioButton();
+		radClassic.setText("Classic Setup");
+		radClassic.addActionListener(getSwitch);
+		radClassic.setSelected(true);
+		
+		radNineSixty = new JRadioButton();
+		radNineSixty.setText("Chess960");
+		radNineSixty.addActionListener(getSwitch);
+
+		grpRadioButtons.add(radClassic);	
+		grpRadioButtons.add(radNineSixty);
+		
+		panMode.add(radClassic);
+		panMode.add(radNineSixty);
+
+		labSetTimer.setFont(new Font("Arial", Font.BOLD, 16));
+		labSetMode.setFont(new Font("Arial", Font.BOLD, 16));
+		
 		labTime = new JLabel("Time Starts now", JLabel.CENTER);
 		labTime.setFont(new Font("SERIF", Font.BOLD, 30));
+		
 		panDisplayTime = new JPanel(new FlowLayout());
-		panTime = new JPanel(new GridLayout(3, 3));
-		panTime.add(setTime);
+		panTime = new JPanel(new GridLayout(5, 5));
+		panTime.add(labSetTimer);
 		panTime.add(panShowPlayer);
+		panTime.add(labSetMode);
+		panTime.add(panMode);
 		panDisplayTime.add(bttnStart);
 		panTime.add(panDisplayTime);
+		
 		panControl.add(panTime);
 		panBoard.setMinimumSize(new Dimension(800, 700));
 
@@ -322,7 +384,7 @@ public class Main extends JFrame implements MouseListener
 	// A function to change the playerTurn from White Player to Black Player or vice
 	// verse
 	// It is made public because it is to be accessed in the Time Class
-	public void changeplayerTurn() {
+	public void changePlayerTurn() {
 		if (boardState[getKing(playerTurn).getx()][getKing(playerTurn).gety()].isCheck()) {
 			playerTurn ^= 1;
 			gameEnd();
@@ -507,6 +569,13 @@ public class Main extends JFrame implements MouseListener
 		panBPlayer.remove(panBDetails);
 		panDisplayTime.remove(labTime);
 
+		panTime.add(labSetTimer);
+		panTime.add(labSetMode);
+		panTime.add(panMode);
+
+		radClassic.enable();
+		radNineSixty.enable();
+
 		panDisplayTime.add(bttnStart);
 		panShowPlayer.remove(labMove);
 		panShowPlayer.remove(labPlayerTurn);
@@ -531,8 +600,8 @@ public class Main extends JFrame implements MouseListener
 	// here is the On-Click Fuction
 	// which is called when the user clicks on a particular cell
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseClicked(MouseEvent arg0) 
+	{
 		c = (Cell) arg0.getSource();
 		if (previous == null) {
 			if (c.getPiece() != null) {
@@ -581,7 +650,7 @@ public class Main extends JFrame implements MouseListener
 						((King) c.getPiece()).setx(c.x);
 						((King) c.getPiece()).sety(c.y);
 					}
-					changeplayerTurn();
+					changePlayerTurn();
 					if (!end) {
 						timer.reset();
 						timer.start();
@@ -657,19 +726,30 @@ public class Main extends JFrame implements MouseListener
 			bttnBCreatePlayer.disable();
 			bttnWSelectPlayer.disable();
 			bttnBSelectPlayer.disable();
+
+			RunSetup();
+			radClassic.disable();
+			radNineSixty.disable();
+
 			split.remove(panTemp);
 			split.add(panBoard);
 			panShowPlayer.remove(timeSlider);
 			labMove = new JLabel("Move:");
 			labMove.setFont(new Font("Comic Sans MS", Font.PLAIN, 20));
 			labMove.setForeground(Color.red);
+
 			panShowPlayer.add(labMove);
 			labPlayerTurn = new JLabel(strMove);
 			labPlayerTurn.setFont(new Font("Comic Sans MS", Font.BOLD, 20));
 			labPlayerTurn.setForeground(Color.blue);
 			panShowPlayer.add(labPlayerTurn);
+
+			panTime.remove(labSetTimer);
+			panTime.remove(labSetMode);
+			panTime.remove(panMode);
 			panDisplayTime.remove(bttnStart);
 			panDisplayTime.add(labTime);
+
 			timer = new Time(labTime);
 			timer.start();
 		}
@@ -790,6 +870,15 @@ public class Main extends JFrame implements MouseListener
 			j.repaint();
 			j.add(det);
 			selected = true;
+		}
+	}
+
+	class SwitchRadio implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if (radClassic.isSelected()) isClassic = true;
+			else isClassic = false;
 		}
 	}
 }

@@ -56,7 +56,7 @@ public class Time
                label.setText("Time's up!");
                reset();
                start();
-               Main.mainBoard.changeChance();
+               Main.mainBoard.changePlayerTurn();
 		 }
     }
  }
