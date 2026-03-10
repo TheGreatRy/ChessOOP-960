@@ -201,6 +201,7 @@ public class Main extends JFrame implements MouseListener
 				}
 			}
 		}
+		
 		else
 		{
 			Random rand = new Random();
@@ -696,9 +697,17 @@ public class Main extends JFrame implements MouseListener
 			((King) (newBoardState[tocell.x][tocell.y].getPiece())).sety(tocell.y);
 		}
 		newBoardState[fromcell.x][fromcell.y].removePiece();
-		if (((King) (newBoardState[getKing(playerTurn).getx()][getKing(playerTurn).gety()].getPiece()))
+		
+		//Make sure piece is a King before casting it
+		if (newBoardState[getKing(playerTurn).getx()][getKing(playerTurn).gety()].getPiece() instanceof King)
+		{	
+			if (((King) (newBoardState[getKing(playerTurn).getx()][getKing(playerTurn).gety()].getPiece()))
 				.isInDanger(newBoardState) == true)
-			return true;
+			{
+				return true;
+			}
+			return false;
+		}	
 		else
 			return false;
 	}
