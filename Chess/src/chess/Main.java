@@ -12,8 +12,10 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Random;
 
 /** 
  * @author ORIGINAL: Ashish Kedia and Adarsh Mohata | UPDATED: Ry Ellender
@@ -44,60 +46,71 @@ import java.util.ListIterator;
 public class Main extends JFrame implements MouseListener 
 {
 	// Variable Declaration
-	//Board
+	
+	//#region Board
 	public static Main mainBoard;
 	private static final int Height = 800;
 	private static final int Width = 1110;
+	//#endregion
 	
-	//Player
+	//#region Player
 	private Player whitePlayer = null, blackPlayer = null;
 	private Player tempPlayer;
 	private ArrayList<Player> itemWPlayer, itemBPlayer;
 	private boolean selected = false, end = false;
+	//#endregion
 
-	//Pieces
+	//#region Pieces
 	private static Rook wR01, wR02, bR01, bR02;
 	private static Knight wN01, wN02, bN01, bN02;
 	private static Bishop wB01, wB02, bB01, bB02;
 	private static Pawn wP[], bP[];
 	private static Queen wQ, bQ;
 	private static King wK, bK;
+	//#endregion
 
-	//Cells
+	//#region Cells
 	private int playerTurn = 0;
 	private Cell c, previous;
 	private Cell boardState[][];
 	private ArrayList<Cell> destinationList = new ArrayList<Cell>();
+	//#endregion
 	
-	//Timer
+	//#region Timer
 	private Time timer;
 	public static int timeRemaining = 60;
+	//#endregion
 
-	//GUI
+	//#region GUI 
 	private JPanel panBoard = new JPanel(new GridLayout(8, 8));
 	private JPanel panWDetails = new JPanel(new GridLayout(3, 3));
 	private JPanel panBDetails = new JPanel(new GridLayout(3, 3));
 	private JPanel panWCombo = new JPanel();
 	private JPanel panBCombo = new JPanel();
 	private JPanel panControl, panWPlayer, panBPlayer, panTemp, panDisplayTime, panShowPlayer, panTime, panMode;
+	
 	private Container content;
 	private ArrayList<String> listWNames = new ArrayList<String>();
 	private ArrayList<String> listBNames = new ArrayList<String>();
+	
 	private String[] arrWNames = {}, arrBNames = {};
 	private JComboBox<String> wCombo, bCombo;
-	private static JLabel labPlayerTurn;
-	private JLabel labTime, labMove, labSetTimer, labSetMode;
-	private JSplitPane split;
 	private String strWName = null, strBName = null, strWinner = null;
 	static 	String strMove;
+	
+	private static JLabel labPlayerTurn;
+	private JLabel labTime, labMove, labSetTimer, labSetMode;
+	
+	private JSplitPane split;
 	private JScrollPane scrollW, scrollB;
 	private JSlider timeSlider;
-	private JRadioButton radClassic, radNineSixty;
 	private BufferedImage image;
 	private Button bttnStart, bttnWSelectPlayer, bttnBSelectPlayer, bttnWCreatePlayer, bttnBCreatePlayer;
+	
+	private JRadioButton radClassic, radNineSixty;
 	private ButtonGroup grpRadioButtons = new ButtonGroup();
-
 	private boolean isClassic = true;
+	//#endregion
 
 	public static void main(String[] args) {
 
@@ -190,7 +203,235 @@ public class Main extends JFrame implements MouseListener
 		}
 		else
 		{
-			//Chess960
+			Random rand = new Random();
+			// Chess960
+			// Use White for setup (Rows 7 and 8)
+
+			//Array of column values (ensures Bishops are on opposite colors)
+			ArrayList<Integer> evens = new ArrayList<Integer>();
+			evens.add(0);
+			evens.add(2);
+			evens.add(4);
+			evens.add(6);
+
+			ArrayList<Integer> odds = new ArrayList<Integer>();
+			odds.add(1);
+			odds.add(3);
+			odds.add(5);
+			odds.add(7);
+
+			// Bishop Positions
+			// First
+			int bishop01Pos = rand.nextInt(0,4);
+			
+			P = wB01;
+			cell = new Cell(7, evens.get(bishop01Pos), P);
+			cell.addMouseListener(this);
+			boardState[7][evens.get(bishop01Pos)] = cell;
+			
+			evens.remove(bishop01Pos);
+			
+			// Second
+			int bishop02Pos = rand.nextInt(0,4);
+
+			P = wB02;
+			cell = new Cell(7, odds.get(bishop02Pos), P);
+			cell.addMouseListener(this);
+			
+			boardState[7][odds.get(bishop02Pos)] = cell;
+
+			odds.remove(bishop02Pos);
+
+			//Update column values
+			ArrayList<Integer> remainingCols = new ArrayList<Integer>();
+			remainingCols.addAll(evens);
+			remainingCols.addAll(odds);
+
+			//Rook positions
+			int rook01Col = 0;
+			int rook02Col = 0;
+			int kingPos = 0;
+
+			while (Math.abs(rook01Col - rook02Col) < 2)
+			{
+				rook01Col = remainingCols.get(rand.nextInt(0,6));
+				rook02Col = remainingCols.get(rand.nextInt(0,6));
+				if (Math.abs(rook01Col - rook02Col) == 2)
+				{
+					kingPos = (rook01Col + rook02Col) / 2;
+					if (boardState[7][kingPos] == null) break;
+					else 
+					{
+						rook01Col = 0;
+						rook02Col = 0;
+					}
+				}
+				else if (Math.abs(rook01Col - rook02Col) > 2)
+				{
+					int lower = Math.min(rook01Col,rook02Col);
+					int upper = Math.max(rook01Col,rook02Col);
+					
+					kingPos = rand.nextInt(lower+1, upper);
+				}
+			}
+
+			//Rooks and King
+			P = wR01;
+			cell = new Cell(7, rook01Col, P);
+			cell.addMouseListener(this);
+			
+			boardState[7][rook01Col] = cell;
+			
+			P = wR02;
+			cell = new Cell(7, rook02Col, P);
+			cell.addMouseListener(this);
+			
+			boardState[7][rook02Col] = cell;
+			
+			P = wK;
+			cell = new Cell(7, kingPos, P);
+			cell.addMouseListener(this);
+			
+			boardState[7][kingPos] = cell;
+			
+			ArrayList<Integer> removeCols = new ArrayList<>();
+			removeCols.add(rook01Col);
+			removeCols.add(rook02Col);
+			removeCols.add(kingPos);
+
+			ArrayList<Integer> lastSet = new ArrayList<>();
+			
+			for (int item : remainingCols)
+			{
+				if (!removeCols.contains(item)) lastSet.add(item);
+			}
+
+			//3 positions left: Knights and Queen
+			Collections.shuffle(lastSet);
+
+			P = wN01;
+			cell = new Cell(7, lastSet.get(0), P);
+			cell.addMouseListener(this);
+			
+			boardState[7][lastSet.get(0)] = cell;
+
+			P = wN02;
+			cell = new Cell(7, lastSet.get(1), P);
+			cell.addMouseListener(this);
+			
+			boardState[7][lastSet.get(1)] = cell;
+			
+			P = wQ;
+			cell = new Cell(7, lastSet.get(2), P);
+			cell.addMouseListener(this);
+			
+			boardState[7][lastSet.get(2)] = cell;
+
+			//White ranked row is done, set up Black ranked row
+			for (int i = 0; i < 8; i++)
+			{
+				int reverse = 7 - i;
+				String piece = boardState[7][i].getPiece().getId().substring(1);
+				switch (piece)
+				{
+					case "B01":
+						P = bB01;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+					case "B02":
+						P = bB02;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+					case "N01":
+						P = bN01;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+					case "N02":
+						P = bN02;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+					case "R01":
+						P = bR01;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+					case "R02":
+						P = bR02;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+					case "K":
+						P = bK;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+					case "Q":
+						P = bQ;
+						cell = new Cell(0, reverse, P);
+						cell.addMouseListener(this);
+						
+						boardState[0][reverse] = cell;
+						break;
+
+				}
+			}
+			
+			//Pawns
+			for (int j = 0; j < 8; j++)
+			{
+				P = bP[j];
+				cell = new Cell(1, j, P);
+				cell.addMouseListener(this);
+				
+				boardState[1][j] = cell;
+				
+				P = wP[j];
+				cell = new Cell(6, j, P);
+				cell.addMouseListener(this);
+				
+				boardState[6][j] = cell;
+			}
+
+			//Blank spaces
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++) {
+					if (boardState[i][j] == null)
+					{
+						P = null;
+						cell = new Cell(i, j, P);
+						cell.addMouseListener(this);
+						
+						boardState[i][j] = cell;
+					}
+				}
+			}
+			
+			//Add all the pieces
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++) {
+					panBoard.add(boardState[i][j]);
+				}
+			}
 		}
 	}
 	// Constructor
@@ -310,6 +551,7 @@ public class Main extends JFrame implements MouseListener
 		panControl.add(panBPlayer);
 		//#endregion
 
+		//#region Display Timer and Game Mode
 		panShowPlayer = new JPanel(new FlowLayout());
 		panShowPlayer.add(timeSlider);
 		labSetTimer = new JLabel("Set Timer(in mins):");
@@ -351,7 +593,8 @@ public class Main extends JFrame implements MouseListener
 		panTime.add(panMode);
 		panDisplayTime.add(bttnStart);
 		panTime.add(panDisplayTime);
-		
+		//#endregion
+
 		panControl.add(panTime);
 		panBoard.setMinimumSize(new Dimension(800, 700));
 
