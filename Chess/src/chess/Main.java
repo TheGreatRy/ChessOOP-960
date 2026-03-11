@@ -17,6 +17,10 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Random;
 
+// import static org.junit.jupiter.api.Assertions.assertEquals;
+
+// import org.junit.jupiter.api.Test;
+
 /** 
  * @author ORIGINAL: Ashish Kedia and Adarsh Mohata | UPDATED: Ry Ellender
  */
@@ -142,8 +146,14 @@ public class Main extends JFrame implements MouseListener
 		mainBoard = new Main();
 		mainBoard.setVisible(true);
 		mainBoard.setResizable(false);
+
+		//Unit testing for Chess960
+
 	}
 
+	
+
+	//Game Mode Choice
 	private void RunSetup()
 	{
 		// Defining all the Cells
@@ -435,10 +445,11 @@ public class Main extends JFrame implements MouseListener
 			}
 		}
 	}
+	
 	// Constructor
 	private Main() {
 
-		SwitchRadio getSwitch = new SwitchRadio();
+		SWITCH_RADIO getSwitch = new SWITCH_RADIO();
 		timeRemaining = 60;
 		timeSlider = new JSlider();
 		strMove = "White";
@@ -463,7 +474,7 @@ public class Main extends JFrame implements MouseListener
 		timeSlider.setMajorTickSpacing(2);
 		timeSlider.setPaintLabels(true);
 		timeSlider.setPaintTicks(true);
-		timeSlider.addChangeListener(new TimeChange());
+		timeSlider.addChangeListener(new TIME_CHANGE());
 		//#endregion
 
 		//#region Get Available Player
@@ -521,12 +532,12 @@ public class Main extends JFrame implements MouseListener
 		
 		bttnWSelectPlayer = new Button("Select");
 		bttnBSelectPlayer = new Button("Select");
-		bttnWSelectPlayer.addActionListener(new SelectHandler(0));
-		bttnBSelectPlayer.addActionListener(new SelectHandler(1));
+		bttnWSelectPlayer.addActionListener(new SELECT_HANDLER(0));
+		bttnBSelectPlayer.addActionListener(new SELECT_HANDLER(1));
 		bttnWCreatePlayer = new Button("New Player");
 		bttnBCreatePlayer = new Button("New Player");
-		bttnWCreatePlayer.addActionListener(new Handler(0));
-		bttnBCreatePlayer.addActionListener(new Handler(1));
+		bttnWCreatePlayer.addActionListener(new HANDLER(0));
+		bttnBCreatePlayer.addActionListener(new HANDLER(1));
 		
 		panWCombo.add(scrollW);
 		panWCombo.add(bttnWSelectPlayer);
@@ -697,7 +708,7 @@ public class Main extends JFrame implements MouseListener
 			((King) (newBoardState[tocell.x][tocell.y].getPiece())).sety(tocell.y);
 		}
 		newBoardState[fromcell.x][fromcell.y].removePiece();
-		
+
 		//Make sure piece is a King before casting it
 		if (newBoardState[getKing(playerTurn).getx()][getKing(playerTurn).gety()].getPiece() instanceof King)
 		{	
@@ -848,6 +859,8 @@ public class Main extends JFrame implements MouseListener
 		mainBoard.setResizable(false);
 	}
 
+	//#region Mouse Events
+
 	// These are the abstract function of the parent class. Only relevant method
 	// here is the On-Click Fuction
 	// which is called when the user clicks on a particular cell
@@ -941,31 +954,33 @@ public class Main extends JFrame implements MouseListener
 	// Other Irrelevant abstract function. Only the Click Event is captured.
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-	}
 
+	}
+	//#endregion
+
+	// Listener Classes
+	// Listener for Start Button
 	class START implements ActionListener {
 
 		@SuppressWarnings("deprecation")
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-
+			
 			if (whitePlayer == null || blackPlayer == null) {
 				JOptionPane.showMessageDialog(panControl, "Fill in the details");
 				return;
@@ -1007,23 +1022,25 @@ public class Main extends JFrame implements MouseListener
 		}
 	}
 
-	class TimeChange implements ChangeListener {
+	// Listener for countdown timer
+	class TIME_CHANGE implements ChangeListener {
 		@Override
 		public void stateChanged(ChangeEvent arg0) {
 			timeRemaining = timeSlider.getValue() * 60;
 		}
 	}
 
-	class SelectHandler implements ActionListener {
+	// Listener for selecting a player
+	class SELECT_HANDLER implements ActionListener {
 		private int color;
 
-		SelectHandler(int i) {
+		SELECT_HANDLER(int i) {
 			color = i;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			tempPlayer = null;
 			String n = (color == 0) ? strWName : strBName;
 			JComboBox<String> jc = (color == 0) ? wCombo : bCombo;
@@ -1077,16 +1094,17 @@ public class Main extends JFrame implements MouseListener
 
 	}
 
-	class Handler implements ActionListener {
+	// Listener for adding a player
+	class HANDLER implements ActionListener {
 		private int color;
 
-		Handler(int i) {
+		HANDLER(int i) {
 			color = i;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			
 			String n = (color == 0) ? strWName : strBName;
 			JPanel j = (color == 0) ? panWPlayer : panBPlayer;
 			ArrayList<Player> N = Player.fetchPlayers();
@@ -1125,7 +1143,8 @@ public class Main extends JFrame implements MouseListener
 		}
 	}
 
-	class SwitchRadio implements ActionListener
+	// Listener for selecting a Game Mode
+	class SWITCH_RADIO implements ActionListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {

@@ -1,0 +1,11 @@
+// Source - https://stackoverflow.com/a/72734155
+// Posted by Jiao
+// Retrieved 2026-03-11, License - CC BY-SA 4.0
+
+{
+    "java.project.sourcePaths": ["Chess/src"],
+    "java.project.outputPath": "Chess/bin",
+    "java.project.referencedLibraries": [
+        "Chess/lib/**/*.jar"
+    ]
+} 

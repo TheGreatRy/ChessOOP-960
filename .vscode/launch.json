@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "java",
             "name": "Current File",
@@ -16,6 +17,13 @@
             "request": "launch",
             "mainClass": "chess.Main",
             "projectName": "Chess"
+        },
+        {
+            "type": "java",
+            "name": "Executable",
+            "request": "launch",
+            "mainClass": "chess.Main",
+            "javaExec": "C:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Executable JAR/Chess.jar"
         }
     ]
 }
