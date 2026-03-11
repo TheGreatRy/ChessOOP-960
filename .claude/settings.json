@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn test:*)",
+      "Bash(cmd.exe /c \"where mvn\")",
+      "Bash(cmd.exe /c \"where mvn 2>nul || echo NOT_FOUND\")",
+      "Read(//c/Users/rellender/.m2/wrapper/dists/**)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files/Java//**)",
+      "Read(//c/Program Files/Microsoft//**)",
+      "Read(//c/Users/rellender/.vscode/extensions//**)",
+      "Bash(find /c/Users/rellender/.vscode/extensions/vscjava.vscode-maven-0.45.1/ -name mvn* -o -name maven-wrapper*)",
+      "Bash(CHESS_DIR=\"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess\")",
+      "Bash(EXT_DIR=\"/c/Users/rellender/.vscode/extensions/vscjava.vscode-maven-0.45.1/resources/maven-wrapper\")",
+      "Bash(mkdir -p \"$CHESS_DIR/.mvn/wrapper\")",
+      "Bash(cp \"$EXT_DIR/.mvn/wrapper/maven-wrapper.jar\" \"$CHESS_DIR/.mvn/wrapper/\")",
+      "Bash(cp \"$EXT_DIR/.mvn/wrapper/maven-wrapper.properties\" \"$CHESS_DIR/.mvn/wrapper/\")",
+      "Bash(cp \"$EXT_DIR/mvnw\" \"$CHESS_DIR/\")",
+      "Bash(cp \"$EXT_DIR/mvnw.cmd\" \"$CHESS_DIR/\")",
+      "Bash(chmod +x \"$CHESS_DIR/mvnw\")",
+      "Bash(JAVA_HOME=\"/c/Program Files/Eclipse Adoptium/jdk-21\" ./mvnw test)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-21\" ./mvnw test)"
+    ]
+  }
+}

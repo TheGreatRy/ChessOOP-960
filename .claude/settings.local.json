@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/main/java/chess\")",
+      "Bash(mkdir -p \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/main/java/pieces\")",
+      "Bash(mkdir -p \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/test/java/chess\")",
+      "Bash(mv src/chess/AppTest.java src/test/java/chess/)",
+      "Bash(mv src/chess/*.java src/main/java/chess/)",
+      "Bash(mv src/pieces/*.java src/main/java/pieces/)",
+      "Bash(rmdir src/chess src/pieces)"
+    ]
+  }
+}
