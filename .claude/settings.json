@@ -19,7 +19,14 @@
       "Bash(cp \"$EXT_DIR/mvnw.cmd\" \"$CHESS_DIR/\")",
       "Bash(chmod +x \"$CHESS_DIR/mvnw\")",
       "Bash(JAVA_HOME=\"/c/Program Files/Eclipse Adoptium/jdk-21\" ./mvnw test)",
-      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-21\" ./mvnw test)"
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-21\" ./mvnw test)",
+      "Bash(mkdir -p \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/main/resources/chess\")",
+      "Bash(cp \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/chess/\"*.png \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/main/resources/chess/\")",
+      "Bash(cp \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/chess/clash.jpg\" \"c:/Users/rellender/source/repos/SoftwareProjects/ChessOOP-960/Chess/src/main/resources/chess/\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\rellender\\source\\repos\\SoftwareProjects\\ChessOOP-960\\Chess\\src\\main\\java\\chess",
+      "c:\\Users\\rellender\\source\\repos\\SoftwareProjects\\ChessOOP-960\\Chess\\src\\test\\resources\\META-INF"
     ]
   }
 }

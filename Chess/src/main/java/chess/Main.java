@@ -116,35 +116,33 @@ public class Main extends JFrame implements MouseListener
 	public static void main(String[] args) {
 
 		// variable initialization
-		wR01 = new Rook("wR01", "White_Rook.png", 0);
-		wR02 = new Rook("wR02", "White_Rook.png", 0);
-		bR01 = new Rook("bR01", "Black_Rook.png", 1);
-		bR02 = new Rook("bR02", "Black_Rook.png", 1);
-		wN01 = new Knight("wN01", "White_Knight.png", 0);
-		wN02 = new Knight("wN02", "White_Knight.png", 0);
-		bN01 = new Knight("bN01", "Black_Knight.png", 1);
-		bN02 = new Knight("bN02", "Black_Knight.png", 1);
-		wB01 = new Bishop("wB01", "White_Bishop.png", 0);
-		wB02 = new Bishop("wB02", "White_Bishop.png", 0);
-		bB01 = new Bishop("bB01", "Black_Bishop.png", 1);
-		bB02 = new Bishop("bB02", "Black_Bishop.png", 1);
-		wQ = new Queen("wQ", "White_Queen.png", 0);
-		bQ = new Queen("bQ", "Black_Queen.png", 1);
-		wK = new King("wK", "White_King.png", 0, 7, 3);
-		bK = new King("bK", "Black_King.png", 1, 0, 3);
+		wR01 = new Rook("wR01", "/chess/White_Rook.png", 0);
+		wR02 = new Rook("wR02", "/chess/White_Rook.png", 0);
+		bR01 = new Rook("bR01", "/chess/Black_Rook.png", 1);
+		bR02 = new Rook("bR02", "/chess/Black_Rook.png", 1);
+		wN01 = new Knight("wN01", "/chess/White_Knight.png", 0);
+		wN02 = new Knight("wN02", "/chess/White_Knight.png", 0);
+		bN01 = new Knight("bN01", "/chess/Black_Knight.png", 1);
+		bN02 = new Knight("bN02", "/chess/Black_Knight.png", 1);
+		wB01 = new Bishop("wB01", "/chess/White_Bishop.png", 0);
+		wB02 = new Bishop("wB02", "/chess/White_Bishop.png", 0);
+		bB01 = new Bishop("bB01", "/chess/Black_Bishop.png", 1);
+		bB02 = new Bishop("bB02", "/chess/Black_Bishop.png", 1);
+		wQ = new Queen("wQ", "/chess/White_Queen.png", 0);
+		bQ = new Queen("bQ", "/chess/Black_Queen.png", 1);
+		wK = new King("wK", "/chess/White_King.png", 0, 7, 3);
+		bK = new King("bK", "/chess/Black_King.png", 1, 0, 3);
 		wP = new Pawn[8];
 		bP = new Pawn[8];
 		for (int i = 0; i < 8; i++) {
-			wP[i] = new Pawn("wP0" + (i + 1), "White_Pawn.png", 0);
-			bP[i] = new Pawn("bP0" + (i + 1), "Black_Pawn.png", 1);
+			wP[i] = new Pawn("wP0" + (i + 1), "/chess/White_Pawn.png", 0);
+			bP[i] = new Pawn("bP0" + (i + 1), "/chess/Black_Pawn.png", 1);
 		}
 
 		// Setting up the board
 		mainBoard = new Main();
 		mainBoard.setVisible(true);
 		mainBoard.setResizable(false);
-
-		//Unit testing for Chess960
 
 	}
 
@@ -230,7 +228,7 @@ public class Main extends JFrame implements MouseListener
 
 			// Bishop Positions
 			// First
-			int bishop01Pos = rand.nextInt(0,4);
+			int bishop01Pos = rand.nextInt(4);
 			
 			P = wB01;
 			cell = new Cell(7, evens.get(bishop01Pos), P);
@@ -240,7 +238,7 @@ public class Main extends JFrame implements MouseListener
 			evens.remove(bishop01Pos);
 			
 			// Second
-			int bishop02Pos = rand.nextInt(0,4);
+			int bishop02Pos = rand.nextInt(4);
 
 			P = wB02;
 			cell = new Cell(7, odds.get(bishop02Pos), P);
@@ -262,8 +260,8 @@ public class Main extends JFrame implements MouseListener
 
 			while (Math.abs(rook01Col - rook02Col) < 2)
 			{
-				rook01Col = remainingCols.get(rand.nextInt(0,6));
-				rook02Col = remainingCols.get(rand.nextInt(0,6));
+				rook01Col = remainingCols.get(rand.nextInt(6));
+				rook02Col = remainingCols.get(rand.nextInt(6));
 				if (Math.abs(rook01Col - rook02Col) == 2)
 				{
 					kingPos = (rook01Col + rook02Col) / 2;
@@ -279,7 +277,7 @@ public class Main extends JFrame implements MouseListener
 					int lower = Math.min(rook01Col,rook02Col);
 					int upper = Math.max(rook01Col,rook02Col);
 					
-					kingPos = rand.nextInt(lower+1, upper);
+					kingPos = (int) Math.floor((Math.random() * upper + 1) + lower+1);
 				}
 			}
 
@@ -461,7 +459,7 @@ public class Main extends JFrame implements MouseListener
 		listWNames = new ArrayList<String>();
 		listBNames = new ArrayList<String>();
 		panBoard.setMinimumSize(new Dimension(800, 700));
-		ImageIcon img = new ImageIcon(this.getClass().getResource("icon.png"));
+		ImageIcon img = new ImageIcon(this.getClass().getResource("/chess/icon.png"));
 		this.setIconImage(img.getImage());
 
 		//#region Timer
@@ -614,7 +612,7 @@ public class Main extends JFrame implements MouseListener
 			public void paintComponent(Graphics g) {
 				try 
 				{
-					image = ImageIO.read(this.getClass().getResource("clash.jpg"));
+					image = ImageIO.read(this.getClass().getResource("/chess/clash.jpg"));
 				} 
 				catch (IOException ex) 
 				{
